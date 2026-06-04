@@ -194,6 +194,10 @@ function renderDash(){
   el('ds-total').textContent=fmtM(tdR.reduce((s,r)=>s+r.totalPrice,0));
   el('ds-df').textContent=fmtM(tdR.reduce((s,r)=>s+r.df,0));
   el('ds-clinic').textContent=fmtM(tdR.reduce((s,r)=>s+r.clinic,0));
+
+  const wQ=qArr.filter(q=>q.status==='waiting').length;
+  const tbQc=el('tb-qc'); if(tbQc) tbQc.textContent = wQ;
+  const notifDot=el('notif-dot'); if(notifDot) { if(lowI>0) notifDot.classList.remove('hidden'); else notifDot.classList.add('hidden'); }
   
   const qtd=qArr.filter(q=>q.date===td&&q.status!=='done'&&q.status!=='skipped').slice(0,4);
   ql.innerHTML=qtd.length?qtd.map(q=>`<div class="flex items-center gap-3 p-2 bg-gray-50 rounded-xl hover:bg-gray-100 transition"><div class="w-8 h-8 ${q.status==='waiting'?'bg-amber-100 text-amber-600':'bg-blue-100 text-blue-600'} rounded-lg flex items-center justify-center shrink-0 font-bold text-xs">${q.queueNo.replace('Q','')}</div><div class="flex-1 min-w-0"><p class="text-gray-800 text-xs font-semibold truncate">${q.name}</p><p class="text-gray-400 text-[10px] truncate">${q.svc}</p></div><span class="text-[10px] font-bold ${q.status==='waiting'?'text-amber-500':'text-blue-500'} bg-white px-1.5 py-0.5 rounded shadow-sm">${q.status==='waiting'?'รอ':'กำลัง'}</span></div>`).join(''):'<p class="text-gray-400 text-xs text-center py-4">ไม่มีคิวที่รอดำเนินการ</p>';
@@ -322,7 +326,7 @@ function showView(v){
   if(v==='inventory')renderInv();
   if(v==='dashboard')renderDash();
   if(v==='export')initExportView();
-  if(v===VIEWS[0]&&window.innerWidth<768)toggleSidebar(false); // Hide sidebar on nav on mobile
+  if(window.innerWidth<768)toggleSidebar(false); // Hide sidebar on nav on mobile
 }
 
 function toggleSidebar(force){
@@ -363,31 +367,7 @@ function toggleTeeth(t){
   if(selPt)loadTD(selPt.hn);
 }
 
-// DASHBOARD
-function renderDash(){
-  const td=today(),tr=receipts.filter(r=>r.date===td);
-  const totRev=tr.reduce((s,r)=>s+r.net,0),totDF=tr.reduce((s,r)=>s+r.df,0),totCl=tr.reduce((s,r)=>s+r.clinic,0);
-  const wQ=qArr.filter(q=>q.status==='waiting').length,tQ=qArr.filter(q=>q.date===td).length,ls=INV.filter(i=>i.stock<=i.min).length;
-  const kpis=[{id:'kpi-rev',lbl:'รายได้วันนี้',val:fmtM(totRev),sub:fmtM(totRev),pct:Math.min(100,totRev/350),clr:'from-p-500 to-p-700',bar:'from-p-500 to-p-600',sc:'shadow-p-200'},
-    {id:'kpi-pt',lbl:'ผู้ป่วยทั้งหมด',val:pts.length,sub:'รวม',pct:60,clr:'from-blue-500 to-blue-700',bar:'from-blue-500 to-blue-600',sc:'shadow-blue-200'},
-    {id:'kpi-q',lbl:'คิววันนี้',val:tQ,sub:'รอ '+wQ,pct:Math.min(100,tQ*10),clr:'from-cyan-500 to-cyan-700',bar:'from-cyan-500 to-cyan-600',sc:'shadow-cyan-200'},
-    {id:'kpi-ls',lbl:'ยาใกล้หมด',val:ls,sub:ls+' รายการ',pct:Math.min(100,ls*15),clr:'from-rose-500 to-pink-600',bar:'from-rose-500 to-pink-500',sc:'shadow-rose-200'}];
-  el('kpi-grid').innerHTML=kpis.map(k=>`<div class="card-h bg-white rounded-2xl p-4 shadow-sm border border-gray-100"><div class="flex items-start justify-between mb-3"><div class="w-11 h-11 bg-gradient-to-br ${k.clr} rounded-xl flex items-center justify-center shadow-md ${k.sc}"><i class="fa-solid ${k.id==='kpi-rev'?'fa-baht-sign':k.id==='kpi-pt'?'fa-users':k.id==='kpi-q'?'fa-people-arrows':'fa-pills'} text-white"></i></div><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${k.id==='kpi-ls'?'bg-rose-50 text-rose-600':k.id==='kpi-q'?'bg-cyan-50 text-cyan-600':k.id==='kpi-pt'?'bg-blue-50 text-blue-600':'bg-emerald-50 text-emerald-600'}">${k.sub}</span></div><p class="text-gray-500 text-xs">${k.lbl}</p><h3 class="text-xl font-bold text-gray-800 mt-0.5">${k.val}</h3><div class="mt-2 bg-gray-100 rounded-full h-1"><div class="bg-gradient-to-r ${k.bar} h-1 rounded-full" style="width:${k.pct}%"></div></div></div>`).join('');
-  el('ds-total').textContent=fmtM(totRev);el('ds-df').textContent=fmtM(totDF);el('ds-clinic').textContent=fmtM(totCl);
-  el('tb-qc').textContent=wQ;
-  if(ls>0)el('notif-dot').classList.remove('hidden');
-  const bars=el('dash-bars');
-  if(!tr.length){bars.innerHTML='<p class="text-gray-400 text-sm text-center py-6">ยังไม่มีรายการวันนี้</p>';}
-  else{const ag={};tr.forEach(r=>r.items.forEach(i=>{ag[i.treatmentName]=(ag[i.treatmentName]||0)+i.price;}));const ents=Object.entries(ag).sort((a,b)=>b[1]-a[1]).slice(0,6);const mx=ents[0]?.[1]||1;const clrs=['bg-p-500','bg-blue-500','bg-emerald-500','bg-amber-500','bg-rose-500','bg-cyan-500'];bars.innerHTML=ents.map(([n,v],i)=>`<div class="flex items-center gap-3"><span class="text-gray-600 text-xs w-36 truncate shrink-0">${n}</span><div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden"><div class="${clrs[i%6]} h-2 rounded-full bfill" style="width:${Math.round(v/mx*100)}%"></div></div><span class="text-gray-700 text-xs font-semibold w-20 text-right shrink-0">${fmtM(v)}</span></div>`).join('');}
-  const activeQ=qArr.filter(q=>q.status!=='done'&&q.status!=='skipped').slice(0,5);
-  el('dash-queue').innerHTML=!activeQ.length?'<p class="text-gray-400 text-sm text-center py-4">ไม่มีคิว</p>':activeQ.map(q=>`<div class="flex items-center gap-2 p-2 rounded-xl border ${q.status==='in-treatment'?'bg-blue-50 border-blue-200':'bg-amber-50 border-amber-200'}"><span class="text-xs font-bold text-gray-600 w-12 shrink-0">${q.queueNo}</span><span class="text-gray-800 text-xs flex-1 truncate">${q.name}</span><span class="text-xs px-1.5 py-0.5 rounded-full ${q.status==='in-treatment'?'bg-blue-100 text-blue-700':'bg-amber-100 text-amber-700'} font-medium">${q.status==='in-treatment'?'กำลัง':'รอ'}</span></div>`).join('');
-  const drSt={};DRS.forEach(d=>drSt[d.id]={name:d.name,ini:d.ini,rev:0,df:0,cnt:0,spec:d.spec});
-  tr.forEach(r=>{if(r.drId&&drSt[r.drId]){drSt[r.drId].rev+=r.net;drSt[r.drId].df+=r.df;drSt[r.drId].cnt+=r.items.length;}});
-  const sdr=Object.values(drSt).sort((a,b)=>b.df-a.df);
-  el('dash-drs').innerHTML=sdr.map((d,i)=>`<div class="flex items-center gap-3 bg-gray-50 rounded-2xl p-3 border border-gray-100"><span class="text-gray-400 font-bold w-5">${i+1}</span><div class="w-8 h-8 bg-gradient-to-br from-p-500 to-p-700 rounded-full flex items-center justify-center shrink-0 shadow-sm"><span class="text-white text-xs font-bold">${d.ini}</span></div><div class="flex-1 min-w-0"><p class="text-gray-800 text-sm font-medium truncate">${d.name}</p><p class="text-gray-500 text-[10px]">${d.spec}</p></div><div class="text-right shrink-0"><span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-bold">เข้าเวร</span><p class="text-gray-400 text-xs mt-0.5">${d.cnt} หัตถการ</p></div></div>`).join('');
-  const qsel=el('dash-q-sel');if(qsel){const cv=qsel.value;qsel.innerHTML='<option value="">-- เลือกผู้ป่วย --</option>'+pts.map(p=>`<option value="${p.hn}">${p.name}</option>`).join('');if(cv)qsel.value=cv;}
-}
-function quickAddQ(){const hn=el('dash-q-sel').value;if(!hn){showToast('warning','เลือกผู้ป่วย','');return;}const p=pts.find(x=>x.hn===hn);if(!p)return;addQItem({name:p.name,phone:p.phone,lineId:p.lineId||'',svc:'ตรวจทั่วไป',ptHN:p.hn,prio:'normal'});el('dash-q-sel').value='';}
+
 function onBell(){const ls=INV.filter(i=>i.stock<=i.min);ls.length?showToast('warning','ยาใกล้หมด',ls.map(i=>`${i.name}: ${i.stock}`).join(', ')):showToast('success','ไม่มีการแจ้งเตือน','ทุกอย่างปกติ');}
 
 // PATIENTS
