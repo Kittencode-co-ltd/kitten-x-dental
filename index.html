@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Wise Dental Clinic — ระบบจัดการคลินิกทันตกรรม</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { fontFamily: { sans: ['Prompt', 'sans-serif'] }, colors: { p: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 500: '#0ea5e9', 600: '#0597f2', 700: '#0369a1', 800: '#075985' } } } } };
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-gray-50 overflow-hidden text-gray-800">
+  <div id="login-layout"
+    class="fixed inset-0 z-50 bg-gray-50 flex flex-col items-center justify-center p-4 animate-fade-in">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden animate-slide-up">
+      <div class="bg-gradient-to-br from-p-700 to-p-500 p-8 text-center relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse"></div>
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-black/10 rounded-full blur-2xl animate-pulse delay-200">
+        </div>
+        <div class="relative z-10 animate-slide-up delay-100">
+          <div
+            class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm border border-white/30 shadow-inner">
+            <i class="fa-solid fa-tooth text-white text-3xl drop-shadow-md"></i>
+          </div>
+          <h1 class="text-white font-bold text-2xl tracking-wide drop-shadow-sm">Wise Dental</h1>
+          <p class="text-p-100 text-sm mt-1">Clinic Management System</p>
+        </div>
+      </div>
+      <div class="p-8">
+        <h2 class="text-gray-800 font-bold text-xl mb-6 text-center animate-slide-up delay-200">เข้าสู่ระบบ / Login</h2>
+        <form id="login-form" onsubmit="doLogin(event)" class="space-y-4">
+          <div class="animate-slide-up delay-200">
+            <label class="block text-gray-600 text-xs font-semibold mb-1.5">ชื่อผู้ใช้งาน (Username)</label>
+            <div class="relative">
+              <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input id="l-user" type="text" placeholder="KITTEN CODE" required
+                class="w-full pl-11 pr-4 py-3 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-p-400 focus:ring-4 focus:ring-p-50 transition bg-gray-50 focus:bg-white text-gray-800 font-medium">
+            </div>
+          </div>
+          <div class="animate-slide-up delay-300">
+            <label class="block text-gray-600 text-xs font-semibold mb-1.5">รหัสผ่าน (Password)</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input id="l-pass" type="password" placeholder="DEMO" required
+                class="w-full pl-11 pr-4 py-3 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-p-400 focus:ring-4 focus:ring-p-50 transition bg-gray-50 focus:bg-white text-gray-800 font-medium">
+            </div>
+            <p class="text-[10px] text-gray-400 mt-2 text-right">*(Demo: ใช้ user อะไรก็ได้ เข้าได้เลย)*</p>
+          </div>
+          <button type="submit"
+            class="w-full bg-gradient-to-r from-p-600 to-p-700 hover:from-p-700 hover:to-p-800 text-white font-bold text-sm py-3.5 rounded-xl transition shadow-lg shadow-p-600/30 flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0 animate-slide-up delay-300">
+            <i class="fa-solid fa-right-to-bracket"></i> ล็อกอินเข้าใช้งาน
+          </button>
+        </form>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 mt-8 font-medium tracking-wide animate-fade-in delay-300">Powered by <span
+        class="text-p-600 font-bold">KITTEN
+        CODE</span></p>
+  </div>
+  <div id="app-layout" class="w-full min-h-screen flex hidden relative">
+    <div id="sidebar-overlay" onclick="toggleSidebar(false)"
+      class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
+    <aside id="sidebar"
+      class="w-64 min-h-screen bg-white/95 backdrop-blur-xl border-r border-gray-100 flex flex-col shadow-2xl md:shadow-none fixed left-0 top-0 z-40 transition-all duration-300 -translate-x-full md:translate-x-0">
+      <div class="px-5 py-4 bg-gradient-to-br from-p-700 to-p-500 relative overflow-hidden">
+        <div class="absolute -top-6 -right-6 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+        <div class="flex items-center gap-3 relative z-10">
+          <div
+            class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-inner border border-white/20 shrink-0">
+            <i class="fa-solid fa-tooth text-white text-xl drop-shadow"></i>
+          </div>
+          <div class="sb-hide overflow-hidden">
+            <h1 class="text-white font-bold text-base leading-tight drop-shadow-sm whitespace-nowrap">Wise Dental</h1>
+            <p class="text-p-100 text-xs whitespace-nowrap">Clinic System</p>
+          </div>
+          <button onclick="toggleSidebar(false)"
+            class="md:hidden ml-auto w-8 h-8 flex items-center justify-center text-white/80 hover:bg-white/20 rounded-lg transition"><i
+              class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 py-3 space-y-1 overflow-y-auto overflow-x-hidden" id="sidebar-nav"></nav>
+      <div class="px-3 py-3 border-t border-gray-100 mt-auto bg-gray-50/50">
+        <div class="text-center mb-3 sb-hide transition-opacity duration-300">
+          <span class="text-[10px] text-gray-400 font-medium">Powered by</span>
+          <p class="text-xs font-bold text-p-600 tracking-wide drop-shadow-sm">Wise Dental Clinic x KITTEN CODE</p>
+        </div>
+        <div class="flex items-center gap-2 p-2 bg-white rounded-xl shadow-sm border border-p-100/50">
+          <div
+            class="w-8 h-8 bg-gradient-to-br from-p-500 to-p-700 rounded-full flex items-center justify-center shrink-0 shadow-inner">
+            <span class="text-white text-xs font-bold" id="sb-dr-ini">ส</span>
+          </div>
+          <div class="flex-1 min-w-0 sb-hide overflow-hidden transition-opacity duration-300">
+            <p class="text-gray-800 font-semibold text-xs truncate whitespace-nowrap" id="sb-dr-name">ทพ. สมชาย แก้วใส
+            </p>
+            <p class="text-gray-400 text-xs flex items-center gap-1 whitespace-nowrap"><span
+                class="w-1.5 h-1.5 bg-emerald-500 rounded-full pulse shadow-emerald-500/50 shadow-sm"></span>เปิดทำการ
+            </p>
+          </div>
+          <button onclick="doLogout()"
+            class="w-8 h-8 bg-red-50 hover:bg-red-100 rounded-lg flex items-center justify-center transition shrink-0 sb-hide text-red-500"
+            title="ออกจากระบบ"><i class="fa-solid fa-right-from-bracket text-sm"></i></button>
+        </div>
+      </div>
+    </aside>
+    <div id="main-content"
+      class="md:ml-64 flex-1 flex flex-col min-h-screen w-full md:w-auto overflow-hidden transition-all duration-300">
+      <header class="bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm sticky top-0 z-20 shrink-0">
+        <div class="flex items-center justify-between px-4 md:px-6 py-3">
+          <div class="flex items-center gap-3">
+            <button onclick="toggleSidebar()"
+              class="w-9 h-9 flex items-center justify-center bg-gray-50 text-gray-600 hover:bg-p-50 hover:text-p-600 rounded-xl transition shadow-sm border border-gray-100 shrink-0">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div>
+              <h2 id="page-title" class="text-gray-800 font-bold text-lg leading-tight">แดชบอร์ด</h2>
+              <p id="page-sub" class="text-gray-400 text-xs">ภาพรวมสดคลินิก</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="showView('queue')"
+              class="hidden md:flex items-center gap-1.5 bg-cyan-50 border border-cyan-200 rounded-xl px-3 py-1.5 hover:bg-cyan-100 transition text-xs text-cyan-700 font-medium"><i
+                class="fa-solid fa-people-arrows text-cyan-600"></i>คิวรอ: <span id="tb-qc">0</span> คน</button>
+            <div class="hidden md:flex items-center gap-2 bg-p-50 border border-p-100 rounded-xl px-3 py-1.5"><i
+                class="fa-regular fa-calendar text-p-500 text-sm"></i><span id="cur-date"
+                class="text-p-700 font-medium text-sm"></span></div>
+            <button onclick="onBell()"
+              class="relative w-9 h-9 bg-gray-100 hover:bg-p-50 rounded-xl flex items-center justify-center transition"><i
+                class="fa-solid fa-bell text-gray-500 text-sm"></i><span id="notif-dot"
+                class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full hidden"></span></button>
+            <div class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5"><span
+                class="w-2 h-2 bg-emerald-500 rounded-full pulse"></span><span
+                class="text-emerald-700 text-xs font-medium">เปิดทำการ</span></div>
+          </div>
+        </div>
+      </header>
+      <main class="flex-1 overflow-y-auto p-5">
+
+        <!-- DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section active">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-5" id="kpi-grid"></div>
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
+            <div class="xl:col-span-2 bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-gray-100">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                <div>
+                  <h3 class="text-gray-800 font-semibold">รายได้ตามหัตถการ</h3>
+                  <p id="dash-date" class="text-gray-400 text-xs"></p>
+                </div>
+              </div>
+              <div id="dash-bars" class="space-y-2.5 min-h-[4rem]"></div>
+              <div class="mt-4 grid grid-cols-3 gap-3">
+                <div class="bg-p-50 rounded-xl p-3">
+                  <p class="text-p-600 text-xs">รายได้รวม</p>
+                  <p id="ds-total" class="text-p-800 font-bold text-sm mt-0.5">฿0</p>
+                </div>
+                <div class="bg-blue-50 rounded-xl p-3">
+                  <p class="text-blue-600 text-xs">Doctor Fee</p>
+                  <p id="ds-df" class="text-blue-800 font-bold text-sm mt-0.5">฿0</p>
+                </div>
+                <div class="bg-emerald-50 rounded-xl p-3">
+                  <p class="text-emerald-600 text-xs">กำไรคลินิก</p>
+                  <p id="ds-clinic" class="text-emerald-800 font-bold text-sm mt-0.5">฿0</p>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-gray-800 font-semibold">คิวสด</h3><button onclick="showView('queue')"
+                  class="text-cyan-600 text-xs font-medium hover:underline">จัดการ →</button>
+              </div>
+              <div id="dash-queue" class="space-y-2 mb-3 min-h-[3rem]"></div>
+              <div class="flex gap-2 border-t border-gray-100 pt-3"><select id="dash-q-sel"
+                  class="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan-300 bg-white">
+                  <option value="">-- เลือกผู้ป่วย --</option>
+                </select><button onclick="quickAddQ()"
+                  class="bg-cyan-500 hover:bg-cyan-600 text-white text-xs px-3 py-1.5 rounded-lg transition font-medium">+
+                  คิว</button></div>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+              <h3 class="text-gray-800 font-semibold">ตารางเวร / ทันตแพทย์</h3>
+              <div class="flex bg-gray-100 rounded-lg p-1">
+                <button onclick="setCalMode('week')" id="cal-btn-week" class="px-4 py-1.5 text-xs font-semibold rounded-md bg-white shadow-sm text-p-600 transition">รายสัปดาห์</button>
+                <button onclick="setCalMode('month')" id="cal-btn-month" class="px-4 py-1.5 text-xs font-semibold rounded-md text-gray-500 hover:text-gray-700 transition">รายเดือน</button>
+              </div>
+            </div>
+            <div id="dash-calendar" class="w-full overflow-x-auto"></div>
+          </div>
+        </section>
+
+        <!-- PATIENTS VIEW -->
+        <section id="view-patients" class="view-section">
+          <div class="grid grid-cols-1 xl:grid-cols-5 gap-5">
+            <div class="xl:col-span-2 bg-white rounded-2xl p-5 shadow-sm border border-gray-100 self-start">
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <div id="pt-form-icon"
+                    class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center transition-colors"><i
+                      class="fa-solid fa-user-plus text-blue-600 transition-colors"></i></div>
+                  <div>
+                    <h3 id="pt-form-title" class="text-gray-800 font-semibold">ลงทะเบียนผู้ป่วยใหม่</h3>
+                    <p id="pt-form-sub" class="text-gray-400 text-xs">OPD Registration</p>
+                  </div>
+                </div>
+                <button type="button" id="pt-btn-cancel" onclick="cancelEditPt()"
+                  class="hidden text-xs text-gray-500 hover:text-red-500 underline transition">ยกเลิกแก้ไข</button>
+              </div>
+              <form id="pt-form" onsubmit="savePt(event)" class="space-y-3">
+                <div><label class="block text-gray-600 text-xs font-semibold mb-1">HN *</label>
+                  <div class="relative"><i
+                      class="fa-solid fa-id-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i><input
+                      id="i-hn" type="text" placeholder="HN-2025-001" required
+                      class="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-p-300 transition">
+                  </div>
+                </div>
+                <div><label class="block text-gray-600 text-xs font-semibold mb-1">ชื่อ-นามสกุล *</label>
+                  <div class="relative"><i
+                      class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i><input
+                      id="i-name" type="text" placeholder="นายสมชาย ดีงาม" required
+                      class="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-p-300 transition">
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div><label class="block text-gray-600 text-xs font-semibold mb-1">วันเกิด</label><input id="i-dob"
+                      type="date"
+                      class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-p-300 transition">
+                  </div>
+                  <div><label class="block text-gray-600 text-xs font-semibold mb-1">เพศ</label><select id="i-gender"
+                      class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-p-300 bg-white">
+                      <option>ชาย</option>
+                      <option>หญิง</option>
+                      <option>อื่นๆ</option>
+                    </select></div>
+                </div>
+                <div><label class="block text-gray-600 text-xs font-semibold mb-1">เบอร์โทร *</label>
+                  <div class="relative"><i
+                      class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i><input
+                      id="i-phone" type="tel" placeholder="08X-XXX-XXXX" required
+                      class="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-p-300 transition">
+                  </div>
+                </div>
+                <div><label class="block text-gray-600 text-xs font-semibold mb-1"><i
+                      class="fa-brands fa-line text-green-500"></i> LINE ID</label><input id="i-line" type="text"
+                    placeholder="LINE ID (ใช้ส่งคิว)"
+                    class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-300 transition">
+                </div>
+                <div><label class="block text-gray-600 text-xs font-semibold mb-1">โรคประจำตัว</label><textarea
+                    id="i-dis" rows="2" placeholder="เบาหวาน, ความดัน..."
+                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-p-300 resize-none transition"></textarea>
+                </div>
+                <div><label class="block text-gray-600 text-xs font-semibold mb-1">แพ้ยา <span
+                      class="text-red-400 bg-red-50 px-1 rounded text-xs">⚠ สำคัญ</span></label><textarea id="i-allergy"
+                    rows="2" placeholder="Penicillin, NSAIDs..."
+                    class="w-full px-3 py-2 border border-red-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-200 resize-none transition"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div><label class="block text-gray-600 text-xs font-semibold mb-1">กรุ๊ปเลือด</label><select
+                      id="i-blood"
+                      class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-p-300">
+                      <option value="">--</option>
+                      <option>A</option>
+                      <option>B</option>
+                      <option>AB</option>
+                      <option>O</option>
+                    </select></div>
+                  <div><label class="block text-gray-600 text-xs font-semibold mb-1">สิทธิ์รักษา</label><select
+                      id="i-cov"
+                      class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-p-300">
+                      <option>ชำระเอง</option>
+                      <option>ประกันสุขภาพ</option>
+                      <option>บัตรทอง</option>
+                      <option>ประกันสังคม</option>
+                      <option>เบิกต้นสังกัด</option>
+                    </select></div>
+                </div>
+                <button type="submit" id="pt-btn-save"
+                  class="w-full bg-gradient-to-r from-p-600 to-p-700 hover:from-p-700 hover:to-p-800 text-white font-semibold py-3 rounded-xl transition shadow-md text-sm flex items-center justify-center gap-2"><i
+                    class="fa-solid fa-floppy-disk"></i><span id="pt-btn-text">บันทึกข้อมูลผู้ป่วย</span></button>
+              </form>
+            </div>
+            <div class="xl:col-span-3 bg-white rounded-2xl p-5 shadow-sm border border-gray-100 self-start">
+              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 class="text-gray-800 font-semibold">รายชื่อผู้ป่วย</h3>
+                  <p id="pt-count" class="text-gray-400 text-xs">0 รายการ</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <select id="pt-f-cov" onchange="ptFilterCov=this.value;ptPage=1;renderPts()"
+                    class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-p-300 bg-white">
+                    <option value="all">ทุกสิทธิ์รักษา</option>
+                    <option value="ชำระเอง">ชำระเอง</option>
+                    <option value="ประกันสุขภาพ">ประกันสุขภาพ</option>
+                    <option value="บัตรทอง">บัตรทอง</option>
+                    <option value="ประกันสังคม">ประกันสังคม</option>
+                    <option value="เบิกต้นสังกัด">เบิกต้นสังกัด</option>
+                  </select>
+                  <select id="pt-f-alg" onchange="ptFilterAlg=this.value;ptPage=1;renderPts()"
+                    class="text-xs border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-p-300 bg-white">
+                    <option value="all">สถานะแพ้ยา</option>
+                    <option value="yes">มีประวัติแพ้ยา</option>
+                  </select>
+                  <div class="relative"><i
+                      class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i><input
+                      id="pt-search" type="text" placeholder="ค้นหา HN, ชื่อ..." oninput="ptPage=1;filterPts()"
+                      class="pl-9 pr-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-p-300 w-32 md:w-40 transition">
+                  </div>
+                  <div class="flex bg-gray-100 rounded-lg p-1 ml-auto lg:ml-0">
+                    <button onclick="setPtView('list')" id="pt-v-list"
+                      class="w-7 h-7 rounded flex items-center justify-center text-gray-500 bg-white shadow-sm transition"><i
+                        class="fa-solid fa-list text-xs"></i></button>
+                    <button onclick="setPtView('grid')" id="pt-v-grid"
+                      class="w-7 h-7 rounded flex items-center justify-center text-gray-400 hover:text-gray-600 transition"><i
+                        class="fa-solid fa-border-all text-xs"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div id="pt-list-container" class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100">
+                      <th
+                        class="text-left text-gray-500 text-[10px] font-bold uppercase py-2.5 px-3 rounded-tl-xl tracking-wider">
+                        HN</th>
+                      <th class="text-left text-gray-500 text-[10px] font-bold uppercase py-2.5 px-3 tracking-wider">
+                        ชื่อ / สิทธิ์รักษา</th>
+                      <th class="text-left text-gray-500 text-[10px] font-bold uppercase py-2.5 px-3 tracking-wider">โทร
+                      </th>
+                      <th class="text-left text-gray-500 text-[10px] font-bold uppercase py-2.5 px-3 tracking-wider">
+                        แพ้ยา</th>
+                      <th
+                        class="text-left text-gray-500 text-[10px] font-bold uppercase py-2.5 px-3 rounded-tr-xl tracking-wider">
+                        จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pt-tbody"></tbody>
+                </table>
+              </div>
+              <div id="pt-grid-container" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+              <p id="pt-empty" class="text-center text-gray-400 py-10 text-sm hidden"><i
+                  class="fa-solid fa-users text-gray-200 text-4xl block mb-2"></i>ไม่พบข้อมูลผู้ป่วย</p>
+
+              <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                <p class="text-xs text-gray-500 font-medium" id="pt-page-info"></p>
+                <div class="flex gap-1" id="pt-pagination"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DENTAL CHART VIEW -->
+        <section id="view-dental" class="view-section">
+          <div
+            class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4 flex flex-col md:flex-row md:items-center gap-4">
+            <div class="flex flex-wrap items-center gap-3 flex-1">
+              <select id="dental-pt-sel" onchange="selDentalPt()"
+                class="text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-p-300 bg-white max-w-xs">
+                <option value="">-- เลือกผู้ป่วย --</option>
+              </select>
+              <select id="dental-dr-sel" onchange="selDoctor()"
+                class="text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-p-300 bg-white max-w-xs">
+                <option value="">-- เลือกแพทย์ --</option>
+              </select>
+              <div id="dental-pt-info" class="flex items-center gap-2 hidden"><span
+                  class="text-gray-300 hidden md:inline">|</span>
+                <p id="dental-pt-name" class="text-gray-800 font-semibold text-sm"></p><span id="dental-allb"
+                  class="hidden bg-red-100 border border-red-300 text-red-700 text-xs font-bold px-2 py-0.5 rounded-full"><i
+                    class="fa-solid fa-triangle-exclamation text-xs"></i> แพ้ยา</span><span id="dental-disb"
+                  class="hidden bg-amber-100 border border-amber-300 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full"></span>
+              </div>
+            </div>
+            <div class="flex gap-2 items-center">
+              <button onclick="addCurPtToQ()" id="btn-add-q"
+                class="hidden bg-cyan-50 border border-cyan-200 text-cyan-700 text-xs font-medium px-3 py-1.5 rounded-xl hover:bg-cyan-100 transition"><i
+                  class="fa-solid fa-people-arrows"></i> เพิ่มในคิว</button>
+              <button onclick="showView('billing')"
+                class="bg-amber-50 border border-amber-200 text-amber-700 text-xs px-3 py-1.5 rounded-xl hover:bg-amber-100 transition flex items-center gap-1.5"><i
+                  class="fa-solid fa-file-invoice-dollar"></i>ออกบิล</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div class="xl:col-span-2 space-y-4">
+              <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 class="text-gray-800 font-semibold">ชาร์ตฟัน (FDI) - ระบบวินิจฉัยและบันทึกหัตถการ</h3>
+                    <p class="text-gray-400 text-xs">คลิกที่ฟันเพื่อวินิจฉัย บันทึกหัตถการ และดูประวัติ</p>
+                  </div>
+                  <div class="flex gap-1.5 flex-wrap justify-end text-xs"><span class="flex items-center gap-1"><span
+                        class="w-3 h-3 rounded border border-gray-300 bg-white inline-block"></span>ปกติ</span><span
+                      class="flex items-center gap-1"><span
+                        class="w-3 h-3 rounded border border-orange-400 bg-orange-200 inline-block"></span>ผุ</span><span
+                      class="flex items-center gap-1"><span
+                        class="w-3 h-3 rounded border border-yellow-400 bg-yellow-200 inline-block"></span>อุด</span><span
+                      class="flex items-center gap-1"><span
+                        class="w-3 h-3 rounded border border-red-400 bg-red-200 inline-block"></span>ถอน</span><span
+                      class="flex items-center gap-1"><span
+                        class="w-3 h-3 rounded border border-purple-400 bg-purple-200 inline-block"></span>ครอบ</span><span
+                      class="flex items-center gap-1"><span
+                        class="w-3 h-3 rounded border border-blue-400 bg-blue-200 inline-block"></span>RCT</span></div>
+                </div>
+                <div class="flex justify-center mb-4">
+                  <div class="flex bg-gray-100 rounded-xl p-1 gap-1"><button onclick="toggleTeeth('perm')" id="btn-perm"
+                      class="tab-btn active text-xs px-4 py-1.5 rounded-lg transition">ฟันแท้</button><button
+                      onclick="toggleTeeth('prim')" id="btn-prim"
+                      class="tab-btn text-xs px-4 py-1.5 rounded-lg text-gray-500 transition">ฟันน้ำนม</button></div>
+                </div>
+                <div id="teeth-perm">
+                  <div class="text-center mb-2"><span
+                      class="text-xs text-gray-400 bg-gray-100 px-3 py-0.5 rounded-full">Upper Jaw (ขากรรไกรบน)</span>
+                  </div>
+                  <div id="chart-pu" class="flex justify-center items-end gap-1 mb-4 flex-wrap"></div>
+                  <div class="flex items-center gap-2 my-2">
+                    <div class="flex-1 border-t-2 border-dashed border-gray-200"></div><span
+                      class="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded">กึ่งกลาง</span>
+                    <div class="flex-1 border-t-2 border-dashed border-gray-200"></div>
+                  </div>
+                  <div id="chart-pl" class="flex justify-center items-start gap-1 mt-4 flex-wrap"></div>
+                  <div class="text-center mt-3"><span
+                      class="text-xs text-gray-400 bg-gray-100 px-3 py-0.5 rounded-full">Lower Jaw (ขากรรไกรล่าง)</span>
+                  </div>
+                </div>
+                <div id="teeth-prim" class="hidden">
+                  <div class="text-center mb-2"><span
+                      class="text-xs text-gray-400 bg-gray-100 px-3 py-0.5 rounded-full">Primary Upper (55-51 |
+                      61-65)</span></div>
+                  <div id="chart-riu" class="flex justify-center items-end gap-1 mb-4 flex-wrap"></div>
+                  <div class="flex items-center gap-2 my-2">
+                    <div class="flex-1 border-t-2 border-dashed border-gray-200"></div><span
+                      class="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded">กึ่งกลาง</span>
+                    <div class="flex-1 border-t-2 border-dashed border-gray-200"></div>
+                  </div>
+                  <div id="chart-ril" class="flex justify-center items-start gap-1 mt-4 flex-wrap"></div>
+                  <div class="text-center mt-3"><span
+                      class="text-xs text-gray-400 bg-gray-100 px-3 py-0.5 rounded-full">Primary Lower (85-81 |
+                      71-75)</span></div>
+                </div>
+              </div>
+              <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center"><i
+                        class="fa-solid fa-notes-medical text-blue-600 text-sm"></i></div>
+                    <div>
+                      <h3 class="text-gray-800 font-semibold text-sm">Doctor Note (SOAP)</h3>
+                      <p id="soap-status" class="text-gray-400 text-xs">เลือกผู้ป่วยก่อน</p>
+                    </div>
+                  </div>
+                  <div class="flex gap-1.5"><button onclick="applyTmpl('routine')"
+                      class="bg-gray-50 border border-gray-200 text-gray-600 text-xs px-2 py-1.5 rounded-lg hover:bg-gray-100 transition">ตรวจตามนัด</button><button
+                      onclick="applyTmpl('emergency')"
+                      class="bg-red-50 border border-red-200 text-red-600 text-xs px-2 py-1.5 rounded-lg hover:bg-red-100 transition">ฉุกเฉิน</button><button
+                      onclick="applyTmpl('followup')"
+                      class="bg-blue-50 border border-blue-200 text-blue-600 text-xs px-2 py-1.5 rounded-lg hover:bg-blue-100 transition">Follow-up</button>
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+                  <div class="min-w-0"><label class="block text-gray-600 text-xs font-semibold mb-1">Chief Complaint
+                      (CC)</label><input id="soap-cc" type="text" placeholder="อาการหลักที่มา..."
+                      class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+                      oninput="autoSave()"></div>
+                  <div class="min-w-0"><label class="block text-gray-600 text-xs font-semibold mb-1">Vital Signs</label>
+                    <div class="flex gap-1.5"><input id="soap-bp" type="text" placeholder="BP 120/80"
+                        class="flex-1 min-w-0 px-2 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+                        oninput="autoSave()"><input id="soap-hr" type="text" placeholder="HR 80"
+                        class="flex-1 min-w-0 px-2 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+                        oninput="autoSave()"><input id="soap-o2" type="text" placeholder="O2 98%"
+                        class="flex-1 min-w-0 px-2 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+                        oninput="autoSave()"></div>
+                  </div>
+                </div>
+                <div class="flex bg-gray-100 rounded-xl p-1 gap-1 mb-3">
+                  <button onclick="switchSoap('S')" id="soap-tab-S" class="soap-t active flex-1 text-xs py-1.5"><span
+                      class="font-bold text-p-600">S</span>ubjective</button>
+                  <button onclick="switchSoap('O')" id="soap-tab-O"
+                    class="soap-t flex-1 text-xs py-1.5 text-gray-500"><span class="font-bold">O</span>bjective</button>
+                  <button onclick="switchSoap('A')" id="soap-tab-A"
+                    class="soap-t flex-1 text-xs py-1.5 text-gray-500"><span
+                      class="font-bold">A</span>ssessment</button>
+                  <button onclick="switchSoap('P')" id="soap-tab-P"
+                    class="soap-t flex-1 text-xs py-1.5 text-gray-500"><span class="font-bold">P</span>lan</button>
+                </div>
+                <div id="soap-pan-S"><textarea id="soap-S" rows="3" placeholder="S: อาการที่ผู้ป่วยบอก..."
+                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none transition"
+                    oninput="autoSave()"></textarea></div>
+                <div id="soap-pan-O" class="hidden"><textarea id="soap-O" rows="3" placeholder="O: สิ่งที่ตรวจพบ..."
+                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none transition"
+                    oninput="autoSave()"></textarea></div>
+                <div id="soap-pan-A" class="hidden"><textarea id="soap-A" rows="3" placeholder="A: การวินิจฉัย (Dx)..."
+                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none transition"
+                    oninput="autoSave()"></textarea></div>
+                <div id="soap-pan-P" class="hidden"><textarea id="soap-P" rows="3" placeholder="P: แผนการรักษา, ยา..."
+                    class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none transition"
+                    oninput="autoSave()"></textarea></div>
+                <div class="flex gap-2 mt-3">
+                  <button onclick="saveSOAP()"
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm"><i
+                      class="fa-solid fa-floppy-disk"></i>บันทึก SOAP</button>
+                  <button onclick="toggleNoteHist()"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm px-4 py-2.5 rounded-xl transition flex items-center gap-2"><i
+                      class="fa-solid fa-clock-rotate-left"></i><span id="note-hcnt">0</span> บันทึก</button>
+                </div>
+                <div id="note-hpanel" class="hidden mt-3 border border-gray-100 rounded-xl overflow-hidden">
+                  <div class="bg-gray-50 px-4 py-2 border-b border-gray-100 flex items-center justify-between">
+                    <p class="text-gray-600 text-xs font-semibold">ประวัติ SOAP</p>
+                  </div>
+                  <div id="note-hlist" class="max-h-48 overflow-y-auto divide-y divide-gray-50"></div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col h-[calc(100vh-140px)] sticky top-6">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-gray-800 font-semibold">รายการหัตถการ / รักษาครั้งนี้</h3>
+                  <p class="text-gray-400 text-xs">Session Treatment</p>
+                </div>
+              </div>
+              <div id="session-dr-info" class="hidden mb-3 bg-p-50 border border-p-100 rounded-xl p-2.5">
+                <p class="text-p-800 text-xs font-semibold" id="session-dr-name"></p>
+                <p class="text-p-500 text-xs" id="session-dr-df"></p>
+              </div>
+              <div id="cart-list" class="flex-1 space-y-2 overflow-y-auto">
+                <div id="cart-empty" class="text-center py-8"><i
+                    class="fa-solid fa-tooth text-gray-200 text-4xl block mb-2"></i>
+                  <p class="text-gray-400 text-sm">คลิกที่ฟัน<br>เพื่อเพิ่มหัตถการหรือจ่ายยา</p>
+                </div>
+              </div>
+              <div class="border-t border-gray-100 mt-3 pt-3 space-y-1">
+                <div class="flex justify-between"><span class="text-gray-500 text-sm">รวมค่ารักษา</span><span
+                    id="sess-total" class="text-gray-800 font-bold">฿0</span></div>
+                <div class="flex justify-between"><span class="text-gray-400 text-xs">DF คาดการณ์</span><span
+                    id="sess-df" class="text-p-600 text-xs font-semibold">฿0</span></div>
+                <div class="flex justify-between"><span class="text-gray-400 text-xs">จำนวน</span><span id="sess-cnt"
+                    class="text-gray-500 text-xs">0 รายการ</span></div>
+                <button onclick="showView('billing')"
+                  class="mt-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-semibold py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2"><i
+                    class="fa-solid fa-cash-register"></i>ชำระเงิน / ออกใบเสร็จ</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BILLING & DF VIEW -->
+        <section id="view-billing" class="view-section">
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div class="xl:col-span-2 space-y-4">
+              <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 class="text-gray-800 font-semibold">ใบแจ้งค่ารักษา</h3>
+                    <p id="bill-pt-lbl" class="text-gray-400 text-xs">กรุณาเลือกผู้ป่วยและเพิ่มหัตถการ</p>
+                  </div>
+                  <div class="flex gap-2"><button onclick="showDFRpt()"
+                      class="bg-p-50 border border-p-200 text-p-700 text-xs px-3 py-1.5 rounded-xl hover:bg-p-100 transition flex items-center gap-1.5 shadow-sm"><i
+                        class="fa-solid fa-chart-bar"></i>DF Report</button><button onclick="printBill()"
+                      class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-sm"><i
+                        class="fa-solid fa-print"></i>พิมพ์</button></div>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 mb-4 p-3 bg-p-50 rounded-xl border border-p-100">
+                  <div class="flex items-center gap-2"><span class="text-p-700 text-sm font-medium">หมอ:</span><select
+                      id="bill-dr-sel" onchange="onBillDrChg()"
+                      class="text-sm border border-p-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-p-300 bg-white text-p-800 font-medium">
+                      <option value="">-- เลือก --</option>
+                    </select></div>
+                  <div class="flex items-center gap-2"><span class="text-p-700 text-sm font-medium">Default
+                      DF:</span><input id="def-df" type="number" min="0" max="100" value="45" onchange="recalcBill()"
+                      class="w-16 px-2 py-1 border border-p-200 rounded-lg text-sm font-bold text-p-700 focus:outline-none text-center"><span
+                      class="text-p-700 text-sm">%</span><button onclick="applyDefDF()"
+                      class="bg-p-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-p-700 transition">ใช้ทั้งหมด</button>
+                  </div>
+                  <div class="flex items-center gap-2 ml-auto"><label class="text-p-700 text-xs font-medium">VAT
+                      7%</label><button onclick="toggleVAT()" id="vat-btn"
+                      class="relative inline-flex h-5 w-9 items-center rounded-full bg-gray-200 transition"><span
+                        id="vat-thumb"
+                        class="inline-block h-4 w-4 transform translate-x-0.5 rounded-full bg-white shadow transition-transform"></span></button><span
+                      id="vat-lbl" class="text-gray-500 text-xs">ปิด</span></div>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="bg-gray-50">
+                        <th class="text-left text-gray-400 text-xs font-semibold uppercase py-2.5 px-3 rounded-l-xl">#
+                        </th>
+                        <th class="text-left text-gray-400 text-xs font-semibold uppercase py-2.5 px-3">รายการ</th>
+                        <th class="text-left text-gray-400 text-xs font-semibold uppercase py-2.5 px-3">ฟัน</th>
+                        <th class="text-right text-gray-400 text-xs font-semibold uppercase py-2.5 px-3">ราคา</th>
+                        <th class="text-center text-gray-400 text-xs font-semibold uppercase py-2.5 px-3">DF%</th>
+                        <th class="text-right text-gray-400 text-xs font-semibold uppercase py-2.5 px-3">DF฿</th>
+                        <th class="text-right text-gray-400 text-xs font-semibold uppercase py-2.5 px-3 rounded-r-xl">ลบ
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody id="bill-tbody"></tbody>
+                  </table>
+                  <div id="bill-empty" class="text-center py-10"><i
+                      class="fa-solid fa-file-invoice text-gray-200 text-3xl block mb-2"></i>
+                    <p class="text-gray-400 text-sm">ยังไม่มีรายการ — ไปห้องตรวจเพื่อเพิ่มหัตถการ</p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <button onclick="toggleMthSumm()"
+                  class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-chart-line text-p-600"></i><span
+                      class="text-gray-700 font-semibold text-sm">บันทึกค่า DF / สรุปรายเดือน</span><span
+                      class="text-p-600 text-xs bg-p-50 px-2 py-0.5 rounded-full font-medium">เดือนนี้</span></div><i
+                    id="mth-ico" class="fa-solid fa-chevron-down text-gray-400 transition-transform"></i>
+                </button>
+                <div id="mth-body" class="hidden border-t border-gray-100 p-4">
+                  <div id="mth-tbl"></div>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <h4 class="text-gray-800 font-semibold mb-4 flex items-center gap-2"><i
+                    class="fa-solid fa-calculator text-p-600"></i>ระบบการชำระเงิน</h4>
+                <div class="space-y-2.5">
+                  <div class="flex justify-between"><span class="text-gray-500 text-sm">ค่ารักษา</span><span
+                      id="summ-total" class="text-gray-800 font-bold">฿0</span></div>
+                  <div class="flex justify-between" id="vat-row" style="display:none"><span
+                      class="text-gray-500 text-sm">VAT 7%</span><span id="summ-vat" class="text-gray-600">฿0</span>
+                  </div>
+                  <div class="flex justify-between"><span class="text-gray-500 text-sm">Doctor Fee</span><span
+                      id="summ-df" class="text-p-700 font-semibold">฿0</span></div>
+                  <div class="flex justify-between pb-2.5 border-b border-gray-100"><span
+                      class="text-gray-500 text-sm">กำไรคลินิก</span><span id="summ-clinic"
+                      class="text-emerald-700 font-semibold">฿0</span></div>
+                  <div class="flex items-center gap-2"><span class="text-gray-500 text-sm shrink-0">ส่วนลด</span>
+                    <div class="relative flex-1"><input id="discount" type="number" min="0" value="0"
+                        onchange="recalcBill()"
+                        class="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-p-300 text-right pr-6"><span
+                        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">฿</span></div>
+                  </div>
+                  <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl p-4 shadow-sm">
+                    <p class="text-white/80 text-xs mb-0.5">ยอดชำระสุทธิ</p>
+                    <p id="summ-net" class="text-white text-3xl font-bold">฿0</p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <h4 class="text-gray-700 font-semibold text-sm mb-3">วิธีชำระเงิน</h4>
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                  <button onclick="selPay(this,'เงินสด')" id="pay-cash"
+                    class="pay-btn flex items-center gap-2 border-2 border-p-300 bg-p-50 text-p-700 rounded-xl p-2.5 text-sm font-medium transition"><i
+                      class="fa-solid fa-money-bill-wave text-p-600"></i>เงินสด</button>
+                  <button onclick="selPay(this,'โอนเงิน')"
+                    class="pay-btn flex items-center gap-2 border-2 border-gray-200 bg-white text-gray-600 rounded-xl p-2.5 text-sm font-medium transition hover:border-p-200"><i
+                      class="fa-solid fa-mobile-screen text-blue-500"></i>โอนเงิน</button>
+                  <button onclick="selPay(this,'บัตรเครดิต')"
+                    class="pay-btn flex items-center gap-2 border-2 border-gray-200 bg-white text-gray-600 rounded-xl p-2.5 text-sm font-medium transition hover:border-p-200"><i
+                      class="fa-solid fa-credit-card text-green-500"></i>บัตรเครดิต</button>
+                  <button onclick="selPay(this,'ประกัน')"
+                    class="pay-btn flex items-center gap-2 border-2 border-gray-200 bg-white text-gray-600 rounded-xl p-2.5 text-sm font-medium transition hover:border-p-200"><i
+                      class="fa-solid fa-shield-halved text-amber-500"></i>ประกัน</button>
+                </div>
+                <button onclick="confirmPay()"
+                  class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3 rounded-xl transition shadow-lg text-sm flex items-center justify-center gap-2"><i
+                    class="fa-solid fa-check-circle"></i>ยืนยันชำระเงิน</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUEUE & LINE NOTIFY VIEW -->
+        <section id="view-queue" class="view-section">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+              <p class="text-gray-400 text-xs mb-1">รอตรวจ</p>
+              <p id="q-wait" class="text-2xl font-bold text-amber-600">0</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+              <p class="text-gray-400 text-xs mb-1">กำลังรักษา</p>
+              <p id="q-treat" class="text-2xl font-bold text-blue-600">0</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+              <p class="text-gray-400 text-xs mb-1">เสร็จแล้ว</p>
+              <p id="q-done" class="text-2xl font-bold text-emerald-600">0</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 text-center">
+              <p class="text-gray-400 text-xs mb-1">LINE ส่งแล้ว</p>
+              <p id="q-line" class="text-2xl font-bold text-green-600">0</p>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 mb-4">
+            <button onclick="callNextQ()"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-md"><i
+                class="fa-solid fa-forward"></i>เรียกคิวถัดไป</button>
+            <button onclick="openQModal()"
+              class="bg-white border border-gray-200 hover:border-p-300 text-gray-700 font-medium px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition"><i
+                class="fa-solid fa-plus text-p-600"></i>เพิ่มคิวใหม่</button>
+            <button onclick="broadcastLINE()"
+              class="bg-green-50 border border-green-200 hover:bg-green-100 text-green-700 font-medium px-4 py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 transition"><i
+                class="fa-brands fa-line"></i>แจ้งเตือนนัดหมาย</button>
+            <div class="sm:ml-auto text-gray-500 text-sm text-center">ล่าสุด: <span id="q-max"
+                class="font-bold text-gray-800">Q000</span></div>
+          </div>
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div class="bg-gray-50 border-b border-gray-100 px-5 py-3 flex items-center justify-between">
+                <h3 class="text-gray-700 font-semibold text-sm">รายการคิว</h3>
+                <div class="flex gap-1.5 text-xs"><button onclick="filterQ('all')" id="qf-all"
+                    class="tab-btn active px-3 py-1 rounded-lg bg-white shadow-sm transition">ทั้งหมด</button><button
+                    onclick="filterQ('waiting')" id="qf-wait"
+                    class="tab-btn px-3 py-1 rounded-lg text-gray-500 transition">รอ</button><button
+                    onclick="filterQ('in-treatment')" id="qf-treat"
+                    class="tab-btn px-3 py-1 rounded-lg text-gray-500 transition">กำลัง</button><button
+                    onclick="filterQ('done')" id="qf-done"
+                    class="tab-btn px-3 py-1 rounded-lg text-gray-500 transition">เสร็จ</button></div>
+              </div>
+              <div id="q-list" class="divide-y divide-gray-50 max-h-96 overflow-y-auto">
+                <div class="text-center py-10 text-gray-400"><i
+                    class="fa-solid fa-people-arrows text-gray-200 text-4xl block mb-3"></i>
+                  <p class="text-sm">ยังไม่มีคิว</p>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div class="flex items-center gap-2 mb-4">
+                  <div class="w-8 h-8 bg-green-100 rounded-xl flex items-center justify-center"><i
+                      class="fa-brands fa-line text-green-500 text-lg"></i></div>
+                  <div>
+                    <h4 class="text-gray-800 font-semibold text-sm">LINE/App Notify (Mockup)</h4>
+                    <p class="text-gray-400 text-xs">Simulation — ไม่ส่งจริง</p>
+                  </div>
+                  <div class="ml-auto flex items-center gap-1.5"><span
+                      class="w-1.5 h-1.5 bg-emerald-500 rounded-full pulse"></span><span
+                      class="text-emerald-600 text-xs font-medium">พร้อม</span></div>
+                </div>
+                <div class="mb-3"><label class="block text-gray-600 text-xs font-semibold mb-1">LINE Notify
+                    Token</label>
+                  <div class="relative"><input id="line-token" type="password" value="mock-token-wisedental"
+                      class="w-full pr-10 pl-3 py-2 border border-gray-200 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-green-300 transition"><button
+                      onclick="toggleTkn()"
+                      class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
+                        class="fa-solid fa-eye text-xs"></i></button></div>
+                </div>
+                <div class="space-y-2 mb-3">
+                  <div><label class="block text-gray-500 text-xs mb-0.5">ถึงคิว:</label><input id="tmpl-ready"
+                      type="text" value="🦷 ถึงคิวของคุณแล้ว! กรุณาเข้าห้องตรวจ — Wise Dental"
+                      class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-green-300 transition">
+                  </div>
+                  <div><label class="block text-gray-500 text-xs mb-0.5">อีก 2 คน:</label><input id="tmpl-soon"
+                      type="text" value="🔔 อีก 2 คนถึงคิวของคุณ — Wise Dental"
+                      class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-green-300 transition">
+                  </div>
+                  <div><label class="block text-gray-500 text-xs mb-0.5">เสร็จสิ้น:</label><input id="tmpl-done"
+                      type="text" value="✅ รักษาเสร็จแล้ว! ขอบคุณ 🦷"
+                      class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-green-300 transition">
+                  </div>
+                </div>
+                <button onclick="testLINE()"
+                  class="w-full bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2 rounded-xl transition flex items-center justify-center gap-2 shadow-sm"><i
+                    class="fa-brands fa-line"></i>ทดสอบส่ง</button>
+              </div>
+              <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-gray-50 border-b border-gray-100 px-4 py-2.5 flex items-center justify-between">
+                  <h4 class="text-gray-700 font-semibold text-sm flex items-center gap-2"><i
+                      class="fa-brands fa-line text-green-500"></i>Message Log</h4><button onclick="clearLineLog()"
+                    class="text-gray-400 text-xs hover:text-red-500 transition">ล้าง</button>
+                </div>
+                <div id="line-log" class="max-h-48 overflow-y-auto p-3 space-y-2 bg-gray-900 min-h-[3rem]">
+                  <p class="text-gray-500 text-xs text-center py-4">ยังไม่มีประวัติส่ง</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- INVENTORY VIEW -->
+        <section id="view-inventory" class="view-section">
+          <div class="flex flex-col md:flex-row flex-wrap md:items-center justify-between gap-3 mb-5">
+            <div class="flex items-center gap-3 w-full md:w-auto">
+              <div class="relative flex-1 md:w-64"><i
+                  class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input
+                  id="inv-search" type="text" placeholder="ค้นหาสินค้า, ยา, วัสดุ..." oninput="filterInv()"
+                  class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-p-300 transition">
+              </div>
+              <button onclick="openInvModal()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition whitespace-nowrap shadow-sm"><i class="fa-solid fa-plus mr-1"></i>เพิ่มสินค้า</button>
+            </div>
+            <div class="flex flex-wrap gap-2 w-full md:w-auto"><button onclick="setCat('all')" id="cat-all"
+                class="flex-1 md:flex-none cat-btn bg-p-600 text-white text-sm px-3 py-2 rounded-xl font-medium transition">ทั้งหมด</button><button
+                onclick="setCat('ยา')" id="cat-drug"
+                class="flex-1 md:flex-none cat-btn bg-white border border-gray-200 text-gray-600 text-sm px-3 py-2 rounded-xl font-medium hover:border-p-300 transition">ยา</button><button
+                onclick="setCat('วัสดุทันตกรรม')" id="cat-mat"
+                class="flex-1 md:flex-none cat-btn bg-white border border-gray-200 text-gray-600 text-sm px-3 py-2 rounded-xl font-medium hover:border-p-300 transition">วัสดุทันตกรรม</button><button
+                onclick="setCat('อุปกรณ์')" id="cat-eq"
+                class="flex-1 md:flex-none cat-btn bg-white border border-gray-200 text-gray-600 text-sm px-3 py-2 rounded-xl font-medium hover:border-p-300 transition">อุปกรณ์</button>
+            </div>
+          </div>
+          <div id="inv-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- EXPORT VIEW -->
+        <section id="view-export" class="view-section">
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 max-w-4xl mx-auto mt-4 animate-slide-up">
+            <h3 class="text-gray-800 font-semibold mb-6 flex items-center gap-2 text-lg"><i class="fa-solid fa-file-export text-indigo-500"></i>ส่งออกข้อมูลระบบ (Export to CSV)</h3>
+            
+            <!-- Control & Date Filter Panel -->
+            <div class="bg-slate-50 rounded-2xl p-5 border border-gray-100 mb-6 flex flex-col gap-4">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div>
+                  <h4 class="text-gray-800 font-semibold text-sm flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-indigo-500"></i> ตัวกรองช่วงเวลาข้อมูล (Date Filter)</h4>
+                  <p class="text-gray-400 text-[11px] mt-0.5">ใช้เพื่อกรองข้อมูลคนไข้ (ตามวันที่ลงทะเบียน) และรายงานการเงิน (ตามวันที่รับชำระ)</p>
+                </div>
+                <!-- Date Presets -->
+                <div class="flex flex-wrap gap-1.5" id="export-presets-container">
+                  <button type="button" onclick="setExportPreset('all')" id="btn-exp-preset-all" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-xs font-medium transition shadow-sm">ทั้งหมด</button>
+                  <button type="button" onclick="setExportPreset('today')" id="btn-exp-preset-today" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-xs font-medium transition shadow-sm">วันนี้</button>
+                  <button type="button" onclick="setExportPreset('7days')" id="btn-exp-preset-7days" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-xs font-medium transition shadow-sm">7 วันล่าสุด</button>
+                  <button type="button" onclick="setExportPreset('month')" id="btn-exp-preset-month" class="px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg text-xs font-medium transition shadow-sm">เดือนนี้</button>
+                  <button type="button" onclick="setExportPreset('year')" id="btn-exp-preset-year" class="px-3 py-1 bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-xs font-medium transition shadow-sm">ปีนี้</button>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-gray-600 text-xs font-semibold mb-1.5">ตั้งแต่ วัน/เดือน/ปี (Start Date)</label>
+                  <div class="relative">
+                    <i class="fa-regular fa-calendar absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="date" id="export-start-date" onchange="onExportDateChange()" class="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white text-gray-700">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-gray-600 text-xs font-semibold mb-1.5">ถึง วัน/เดือน/ปี (End Date)</label>
+                  <div class="relative">
+                    <i class="fa-regular fa-calendar absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="date" id="export-end-date" onchange="onExportDateChange()" class="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white text-gray-700">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+              
+              <div class="border border-gray-100 rounded-2xl p-5 hover:shadow-md hover:border-blue-200 transition bg-white flex flex-col items-center text-center group">
+                <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-users text-blue-500 text-2xl"></i>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-2">ข้อมูลคนไข้</h4>
+                <p class="text-xs text-gray-500 mb-5 flex-1">ส่งออกข้อมูลรายชื่อคนไข้ เบอร์ติดต่อ โรคประจำตัว และสิทธิ์การรักษาทั้งหมด</p>
+                <button onclick="previewPatients()" class="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+                  <i class="fa-solid fa-eye"></i>แสดงตัวอย่างข้อมูล
+                </button>
+              </div>
+
+              <div class="border border-gray-100 rounded-2xl p-5 hover:shadow-md hover:border-amber-200 transition bg-white flex flex-col items-center text-center group">
+                <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-coins text-amber-500 text-2xl"></i>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-2">รายงานการเงิน & DF</h4>
+                <p class="text-xs text-gray-500 mb-5 flex-1">ประวัติรายได้ทั้งหมด, ส่วนแบ่งแพทย์ (Doctor Fee), และช่องทางการชำระเงิน</p>
+                <button onclick="previewFinancials()" class="w-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+                  <i class="fa-solid fa-eye"></i>แสดงตัวอย่างข้อมูล
+                </button>
+              </div>
+
+              <div class="border border-gray-100 rounded-2xl p-5 hover:shadow-md hover:border-emerald-200 transition bg-white flex flex-col items-center text-center group">
+                <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-box-open text-emerald-500 text-2xl"></i>
+                </div>
+                <h4 class="font-bold text-gray-800 mb-2">สต๊อกสินค้า</h4>
+                <p class="text-xs text-gray-500 mb-5 flex-1">บัญชีรายชื่อยา วัสดุทันตกรรม อุปกรณ์ จำนวนคงเหลือ และราคาทุน</p>
+                <button onclick="previewInventory()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+                  <i class="fa-solid fa-eye"></i>แสดงตัวอย่างข้อมูล
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Preview Card Container -->
+            <div id="export-preview-card" class="mt-6 bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hidden border-t-4 border-t-indigo-500 animate-slide-up">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 border-b border-gray-100 pb-4">
+                <div>
+                  <h4 class="text-gray-800 font-bold text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass-chart text-indigo-500"></i>
+                    ตัวอย่างข้อมูล: <span id="preview-title" class="text-indigo-600 font-extrabold">-</span>
+                  </h4>
+                  <p class="text-gray-400 text-xs mt-1" id="preview-meta-info">พบข้อมูล 0 รายการในช่วงเวลาที่เลือก</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button type="button" onclick="closeExportPreview()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-semibold px-3.5 py-2 rounded-xl transition">
+                    ปิดตัวอย่าง
+                  </button>
+                  <button type="button" id="btn-export-download" class="bg-gradient-to-r from-indigo-500 to-p-600 hover:from-indigo-600 hover:to-p-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-md shadow-indigo-100 flex items-center gap-2">
+                    <i class="fa-solid fa-file-csv text-sm"></i>ดาวน์โหลดไฟล์ CSV
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Info alert for stock/no date -->
+              <div id="preview-no-date-alert" class="hidden mb-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-800 text-xs flex items-start gap-2">
+                <i class="fa-solid fa-circle-info text-amber-600 text-sm shrink-0 mt-0.5 animate-pulse"></i>
+                <p><strong>หมายเหตุ:</strong> ข้อมูลสต๊อกสินค้าสะท้อนระดับคงคลังแบบเรียลไทม์ ณ ปัจจุบัน ตัวกรองช่วงเวลาจึงไม่มีผลกับรายงานนี้</p>
+              </div>
+
+              <!-- Preview Table -->
+              <div class="overflow-x-auto border border-gray-100 rounded-xl bg-gray-50/50 max-h-80">
+                <table class="w-full text-xs text-left">
+                  <thead class="bg-gray-50 border-b border-gray-100 text-gray-500 font-bold sticky top-0">
+                    <tr id="preview-table-header" class="text-[10px] uppercase tracking-wider">
+                      <!-- Dynamically generated headers -->
+                    </tr>
+                  </thead>
+                  <tbody id="preview-table-body" class="divide-y divide-gray-100 text-gray-700 font-medium">
+                    <!-- Dynamically generated rows -->
+                  </tbody>
+                </table>
+              </div>
+              
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4 text-[10px] text-gray-400">
+                <p id="preview-limit-msg" class="flex items-center gap-1"><i class="fa-solid fa-circle-exclamation text-indigo-400"></i> แสดงเฉพาะ 10 แถวแรกเป็นตัวอย่างเพื่อความรวดเร็วในการโหลด</p>
+                <p class="font-bold text-indigo-500 flex items-center gap-1"><i class="fa-solid fa-circle-check text-emerald-500"></i> โปรดตรวจสอบความถูกต้องก่อนกดดาวน์โหลด</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    </div>
+
+    <!-- INVENTORY MODAL -->
+    <div id="inv-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden"
+      onclick="closeInvModal(event)">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 flex flex-col overflow-hidden"
+        onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 p-4 shrink-0 flex items-center justify-between">
+          <h3 class="text-white font-bold text-lg"><i class="fa-solid fa-box-open mr-2"></i><span id="inv-m-title">เพิ่มสินค้าใหม่</span></h3>
+          <button onclick="closeInvModal()" class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition"><i class="fa-solid fa-xmark text-white"></i></button>
+        </div>
+        <div class="p-5 space-y-4">
+          <input type="hidden" id="inv-m-id">
+          <div>
+            <label class="block text-gray-600 text-xs font-semibold mb-1">ชื่อสินค้า / ยา</label>
+            <input id="inv-m-name" type="text" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="e.g. Amoxicillin 500mg">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-gray-600 text-xs font-semibold mb-1">หมวดหมู่</label>
+              <select id="inv-m-cat" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300">
+                <option value="ยา">ยา</option>
+                <option value="วัสดุทันตกรรม">วัสดุทันตกรรม</option>
+                <option value="อุปกรณ์">อุปกรณ์</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-600 text-xs font-semibold mb-1">หน่วยนับ</label>
+              <input id="inv-m-unit" type="text" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="e.g. เม็ด, หลอด">
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-gray-600 text-xs font-semibold mb-1">สต๊อก</label>
+              <input id="inv-m-stock" type="number" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="0">
+            </div>
+            <div>
+              <label class="block text-gray-600 text-xs font-semibold mb-1">ราคา/หน่วย</label>
+              <input id="inv-m-price" type="number" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="0">
+            </div>
+            <div>
+              <label class="block text-gray-600 text-xs font-semibold mb-1">จุดสั่งซื้อ (Min)</label>
+              <input id="inv-m-min" type="number" class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300" placeholder="0">
+            </div>
+          </div>
+          <button onclick="saveInvItem()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm py-3 rounded-xl transition shadow-md mt-2">
+            บันทึกข้อมูล
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODALS (Tooth, Queue, Line, Success, DF Report) -->
+    <div id="modal-ov" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden"
+      onclick="closeTMod(event)">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 flex flex-col max-h-[90vh] overflow-hidden"
+        onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-r from-p-600 to-p-700 p-4 shrink-0">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center"><i
+                  class="fa-solid fa-tooth text-white"></i></div>
+              <div>
+                <h3 class="text-white font-bold text-lg">ฟันซี่ที่ <span id="m-tooth-no"></span></h3>
+                <p id="m-tooth-stat" class="text-p-200 text-xs">สถานะ: ปกติ</p>
+              </div>
+            </div><button onclick="closeTMod()"
+              class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition"><i
+                class="fa-solid fa-xmark text-white"></i></button>
+          </div>
+          <div class="flex gap-1.5"><button onclick="switchMTab('proc')" id="mtab-proc"
+              class="flex-1 text-xs py-1.5 rounded-lg bg-white/20 text-white font-medium transition">หัตถการ /
+              วินิจฉัย</button><button onclick="switchMTab('surf')" id="mtab-surf"
+              class="flex-1 text-xs py-1.5 rounded-lg bg-white/10 text-p-200 font-medium hover:bg-white/20 transition">ระบุพื้นผิว</button><button
+              onclick="switchMTab('hist')" id="mtab-hist"
+              class="flex-1 text-xs py-1.5 rounded-lg bg-white/10 text-p-200 font-medium hover:bg-white/20 transition">ประวัติ</button>
+          </div>
+        </div>
+        <div id="mpan-proc" class="p-4 overflow-y-auto flex-1">
+          <p class="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-2">ระบบวินิจฉัย (สถานะฟัน)</p>
+          <div id="m-stat-grid" class="grid grid-cols-4 gap-1.5 mb-4"></div>
+          <p class="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-2">ระบบบันทึกหัตถการ</p>
+          <div id="m-proc-list" class="space-y-1.5"></div>
+        </div>
+        <div id="mpan-surf" class="p-5 hidden overflow-y-auto flex-1">
+          <p class="text-gray-600 text-sm font-medium mb-4">เลือกพื้นผิวที่มีปัญหา (Surfaces)</p>
+          <div class="flex justify-center gap-6 mb-4">
+            <div class="sg">
+              <div class="sc" style="background:transparent"></div>
+              <div class="sc sb" id="surf-D" onclick="togSurf('D')" title="Distal">D</div>
+              <div class="sc" style="background:transparent"></div>
+              <div class="sc sb" id="surf-L" onclick="togSurf('L')" title="Lingual">L</div>
+              <div class="sc sb" id="surf-O" onclick="togSurf('O')" title="Occlusal"
+                style="background:#f9fafb;border-style:dashed">O</div>
+              <div class="sc sb" id="surf-B" onclick="togSurf('B')" title="Buccal">B</div>
+              <div class="sc" style="background:transparent"></div>
+              <div class="sc sb" id="surf-M" onclick="togSurf('M')" title="Mesial">M</div>
+              <div class="sc" style="background:transparent"></div>
+            </div>
+            <div class="text-xs text-gray-500 space-y-1.5 self-center">
+              <p><b class="text-gray-700">M</b> Mesial</p>
+              <p><b class="text-gray-700">D</b> Distal</p>
+              <p><b class="text-gray-700">B</b> Buccal</p>
+              <p><b class="text-gray-700">L</b> Lingual</p>
+              <p><b class="text-gray-700">O</b> Occlusal</p>
+            </div>
+          </div>
+          <label class="block text-gray-600 text-sm font-medium mb-1.5">บันทึกต่อซี่</label>
+          <textarea id="tooth-note" rows="2" placeholder="อาการ, การวินิจฉัยต่อซี่นี้..."
+            class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-p-300 resize-none transition"></textarea>
+          <button onclick="saveSurf()"
+            class="mt-3 w-full bg-p-600 hover:bg-p-700 text-white text-sm font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-sm"><i
+              class="fa-solid fa-floppy-disk"></i>บันทึกพื้นผิว</button>
+        </div>
+        <div id="mpan-hist" class="p-4 hidden overflow-y-auto flex-1">
+          <p class="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-3">ระบบประวัติการรักษาซี่นี้</p>
+          <div id="m-hist-list" class="space-y-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="q-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden"
+        onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-r from-cyan-600 to-cyan-500 p-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center"><i
+                class="fa-solid fa-people-arrows text-white"></i></div>
+            <h3 class="text-white font-bold">เพิ่มคิวใหม่</h3>
+          </div><button onclick="closeQModal()"
+            class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition"><i
+              class="fa-solid fa-xmark text-white"></i></button>
+        </div>
+        <div class="p-5 space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block text-gray-600 text-xs font-semibold mb-1">ผู้ป่วยในระบบ</label><select
+                id="q-pt-sel"
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300 bg-white transition"
+                onchange="prefillQ()">
+                <option value="">-- เลือก --</option>
+              </select></div>
+            <div><label class="block text-gray-600 text-xs font-semibold mb-1">ความเร่งด่วน</label><select id="q-prio"
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300 bg-white transition">
+                <option value="normal">ปกติ</option>
+                <option value="urgent">เร่งด่วน</option>
+              </select></div>
+          </div>
+          <div><label class="block text-gray-600 text-xs font-semibold mb-1">ชื่อ</label><input id="q-name" type="text"
+              placeholder="ชื่อผู้ป่วย"
+              class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300 transition">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block text-gray-600 text-xs font-semibold mb-1">เบอร์โทร</label><input id="q-phone"
+                type="tel" placeholder="08X-XXX-XXXX"
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300 transition">
+            </div>
+            <div><label class="block text-gray-600 text-xs font-semibold mb-1">LINE ID</label><input id="q-lineid"
+                type="text" placeholder="LINE ID"
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-300 transition">
+            </div>
+          </div>
+          <div><label class="block text-gray-600 text-xs font-semibold mb-1">บริการ</label><input id="q-svc" type="text"
+              placeholder="อุดฟัน, ขูดหินปูน..."
+              class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-300 transition">
+          </div>
+          <div class="flex gap-2"><button onclick="addQFromModal()"
+              class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm"><i
+                class="fa-solid fa-plus"></i>เพิ่มคิว</button><button onclick="closeQModal()"
+              class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-3 rounded-xl transition text-sm">ยกเลิก</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="line-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden">
+      <div class="bg-gray-100 rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+        <div class="bg-green-500 p-4 flex items-center gap-3"><button onclick="closeLineMod()"
+            class="text-white/80 hover:text-white mr-1 transition"><i class="fa-solid fa-arrow-left"></i></button>
+          <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center"><i
+              class="fa-brands fa-line text-green-500 text-lg"></i></div>
+          <div>
+            <p class="text-white font-semibold text-sm">Wise Dental</p>
+            <p class="text-green-200 text-xs">LINE Notify (Mockup)</p>
+          </div>
+        </div>
+        <div class="bg-gray-100 p-4 min-h-[8rem]">
+          <div class="flex items-start gap-2">
+            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shrink-0"><i
+                class="fa-brands fa-line text-white text-sm"></i></div>
+            <div class="bg-white rounded-2xl rounded-tl-sm shadow p-3 max-w-[16rem]">
+              <p id="line-prev-txt" class="text-gray-800 text-sm whitespace-pre-line"></p>
+              <p class="text-gray-400 text-xs mt-1 text-right" id="line-prev-time"></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white px-4 py-3 flex justify-between items-center border-t border-gray-200">
+          <p class="text-gray-500 text-xs">ส่งไปยัง: <span id="line-prev-recip"
+              class="font-semibold text-gray-700"></span></p><button onclick="confirmLINESend()"
+            class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-sm"><i
+              class="fa-solid fa-paper-plane"></i>ส่ง (Mock)</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="succ-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden">
+      <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm mx-4 p-8 text-center">
+        <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4"><i
+            class="fa-solid fa-check-circle text-emerald-500 text-4xl"></i></div>
+        <h3 class="text-gray-800 font-bold text-2xl mb-2">ชำระเงินสำเร็จ!</h3>
+        <p id="succ-msg" class="text-gray-500 text-sm mb-5"></p>
+        <div id="succ-detail" class="bg-gray-50 rounded-2xl p-4 mb-5 text-left space-y-2"></div><button
+          onclick="closeSuccMod()"
+          class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-3 rounded-xl hover:from-emerald-600 hover:to-emerald-700 transition shadow-md">เสร็จสิ้น</button>
+      </div>
+    </div>
+
+    <div id="df-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden max-h-[85vh] overflow-y-auto">
+        <div class="bg-gradient-to-r from-p-600 to-p-700 p-5 flex items-center justify-between sticky top-0">
+          <div class="flex items-center gap-3"><i class="fa-solid fa-chart-bar text-white text-lg"></i>
+            <h3 class="text-white font-bold text-lg">Doctor Fee Report / ตารางเวร</h3>
+          </div><button onclick="closeDFMod()"
+            class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition"><i
+              class="fa-solid fa-xmark text-white"></i></button>
+        </div>
+        <div class="p-5" id="df-rpt"></div>
+      </div>
+    </div>
+
+    <div id="toast"
+      class="fixed bottom-5 right-5 z-50 flex items-center gap-3 bg-gray-900 text-white px-5 py-3 rounded-2xl shadow-2xl">
+      <div id="toast-icon" class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center shrink-0"><i
+          class="fa-solid fa-check text-white text-sm"></i></div>
+      <div>
+        <p id="toast-title" class="font-semibold text-sm"></p>
+        <p id="toast-msg" class="text-gray-400 text-xs"></p>
+      </div>
+    </div>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+
+</html>
