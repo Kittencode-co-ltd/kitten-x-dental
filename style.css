@@ -39,8 +39,14 @@
 .trow:hover { background: #f0f9ff; }
 .tab-btn.active { background: white; box-shadow: 0 1px 3px rgba(0, 0, 0, .1); color: #0597f2; font-weight: 600; }
 
-/* Sidebar safe area for mobile (Android/iOS navigation bar) */
-#sidebar .px-3.py-3.border-t {
+/* Sidebar height: use dynamic viewport height to exclude Android nav bar */
+#sidebar {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Sidebar footer safe area padding for Android/iOS navigation bar */
+#sidebar .border-t {
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
